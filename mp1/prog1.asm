@@ -184,12 +184,12 @@ NEG_AT		.FILL xFFC0	; the additive inverse of ASCII '@'
 AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
-;STR_START	.FILL x4000	; string starting address
+STR_START	.FILL x4000	; string starting address
 
 ; for testing, you can use the lines below to include the string in this
 ; program...
- STR_START	.FILL STRING	; string starting address
- STRING		.STRINGZ "This is a test of the counting frequency code.  AbCd...WxYz."
+; STR_START	.FILL STRING	; string starting address
+; STRING		.STRINGZ "This is a test of the counting frequency code.  AbCd...WxYz."
 
 
 
