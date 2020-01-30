@@ -95,6 +95,12 @@ GET_NEXT
 	ADD R1,R1,#1		; point to next character in string
 	BRnzp COUNTLOOP		; go to start of counting loop
 
+; you will need to insert your code to print the histogram here
+
+; do not forget to write a brief description of the approach/algorithm
+; for your implementation, list registers used in this part of the code,
+; and provide sufficient comments
+
 ; Intro Paragraph
 
 ; This portion of the program prints the value of each 
@@ -110,6 +116,16 @@ GET_NEXT
 ; value so we end up with a 16 bit, 4 digit hex value.
 
 ; partner: pranay2
+
+; Register Table
+; R0 holds the value we want to print, whether it's the contents of the
+; histogram, a letter, or a space
+; R2 counts the groups of 4 in a hex value to convert to ASCII
+; R3 holds the content of the histogram for each letter
+; R4 holds the offset we add to each group of 4 to turn it from
+; a number to its corresponding ASCII value
+; R5 is used as a pointer to the histogram memory location
+; R6 is used to iterate the histogram loop
 				
 
 PRINT_HIST
@@ -171,20 +187,8 @@ ADDOFFSET
 	ADD R1, R1,#-1          ; Decrement R1
 	ST R1, LOOPS            ; Store R1 back into loops
 	BRp PRINT               ; Branch to PRINT_HIST if R1 is positive
-	
-
-       
-
-; you will need to insert your code to print the histogram here
-
-; do not forget to write a brief description of the approach/algorithm
-; for your implementation, list registers used in this part of the code,
-; and provide sufficient comments
-
-
 
 DONE	HALT			; done
-
 
 ; the data needed by the program
 
@@ -200,8 +204,5 @@ AT_MIN_Z	.FILL xFFE6	; the difference between ASCII '@' and 'Z'
 AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
-
-	; the directive below tells the assembler that the program is done
-	; (so do not write any code below it!)
 
 	.END
