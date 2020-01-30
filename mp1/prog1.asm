@@ -94,15 +94,30 @@ MORE_THAN_Z
 GET_NEXT
 	ADD R1,R1,#1		; point to next character in string
 	BRnzp COUNTLOOP		; go to start of counting loop
+
+; Intro Paragraph
+
+; This portion of the program prints the value of each 
+; consecutive memory location starting at x3F00, and going
+; until x3F1B. (27 iterations) It also iterates through the ASCII
+; characters @-Z, printing them before each memory value. We do this
+; storing the ASCII value for the @ symbol and incrementing it every loop.
+; We do the same with the address of the histogram value we want to print.
+; In order to print the histogram value, we left shift the value to check the
+; most significant bit. Then we add 1 or 0 to the value we need to print accordingly.
+; Once we go through 4 iterations, we add an offset to convert the value to its
+; ASCII symbol and print using the OUT trap vector. We do this 4 times for each
+; value so we end up with a 16 bit, 4 digit hex value.
+
+; partner: pranay2
 				
 
 PRINT_HIST
-				; New code starts here
-	AND R6, R6, #0          ; RESET R1,
+	AND R6, R6, #0          ; RESET R6
 PRINT 
 	LD R1, LOOPS            ; Load Loops value into R1
 	LD R0, SYMBOL           ; Load first symbol
-        ADD R0, R0, R6          ; Add 
+        ADD R0, R0, R6          ; Add R6 to R0, store in R0
 	OUT		        ; Print symbol
 	LD R0, SPACE            ; Load Space
 	OUT		        ; Print Space
@@ -113,12 +128,12 @@ PRINT
         AND R2, R2, #0          ; clear R2 (digit counter)
         AND R3, R3, #0          ; clear R3 (value)
         AND R4, R4, #0          ; clear R4 (offset)
-	AND R5, R5, #0          ;
+	AND R5, R5, #0          ; clear R5 (increment address)
 
-        LDI R3, HIST_ADDR       ; 
-        LD R5, HIST_ADDR        ;
-	ADD R5, R5, #1          ;
-	ST R5, HIST_ADDR        ;
+        LDI R3, HIST_ADDR       ; Load M(HIST_ADDR) into R3 
+        LD R5, HIST_ADDR        ; Load HIST_ADDR into R5
+	ADD R5, R5, #1          ; Increment R5
+	ST R5, HIST_ADDR        ; Store R5 in HIST_ADDR
 
         ADD R2, R2, #8
         ADD R2, R2, #8          ; R2 holds 16
