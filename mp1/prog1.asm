@@ -186,13 +186,6 @@ AT_MIN_BQ	.FILL xFFE0	; the difference between ASCII '@' and '`'
 HIST_ADDR	.FILL x3F00     ; histogram starting address
 STR_START	.FILL x4000	; string starting address
 
-; for testing, you can use the lines below to include the string in this
-; program...
-; STR_START	.FILL STRING	; string starting address
-; STRING		.STRINGZ "This is a test of the counting frequency code.  AbCd...WxYz."
-
-
-
 	; the directive below tells the assembler that the program is done
 	; (so do not write any code below it!)
 
