@@ -1,65 +1,238 @@
-;
-;
-;
-.ORIG x3000
+; Intro Paragraph
+
+; This program implements a stack calculator that evaluates a postfix expression.
+; If the character entered is an operand (0-9) it is pushed to the stack. 
+; If the character entered is an operator (+,-,*,/,^), 2 operands are popped from the stack, 
+; the operator is applied, and the result is pushed back.
+; If the character entered is an '=', the final result is popped from the stack, stored to R5, and printed
+; in hex
+; If the input is invalid, an error message is displayed. 
+
+
+; partner: pranay2
+
+
+; Register Table
+; R0:
+; R1:
+; R2:
+; R3:
+; R4:
+; R5:
+; R6:
+; R7:
+
+.ORIG x3000	
 	
-;your code goes here
-	
-
-
-
-
-
-
-
-
-
-
-
+GET_INPUT
+    GETC    ;
+    OUT     ;
+    JSR EVALUATE    ;
+    BRnzp GET_INPUT ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;R3- value to print in hexadecimal
 PRINT_HEX
+    
+    AND R0, R0, #0          ; clear R0 (digit)
+    AND R1, R1, #0          ; clear R1 (bit counter)
+    AND R2, R2, #0          ; clear R2 (digit counter)
+    AND R4, R4, #0          ; clear R4 (offset)
+    
+    ADD R2, R2, #8          ; Add 8 to R2
+    ADD R2, R2, #8          ; R2 holds 16
 
+BITSTRING  
+    ADD R1, R1, #4          ; R1 = 4
+    AND R0, R0, #0          ; clear R0 (digit)
+    AND R5, R5, #0          ; clear R5 (test value)
+
+DIGLOOP
+    ADD R0, R0, R0          ; left shift R0
+    ADD R3, R3, #0          ; bring R3 in front of BRANCH statement
+    BRzp NEXTDIG            ; skip adding 1 if R3 has 0 in MSB
+    ADD R0, R0, #1          ; add 1 if MSB is 1
+NEXTDIG    
+    ADD R3, R3, R3          ; left shift for next digit check
+    ADD R1, R1, #-1         ; decrease bit counter
+    BRp DIGLOOP             ; decrease
+
+    LD R4, NINEOFFSET       ; load R4 with the offset for numbers 0 to 9 if the number is less than 10
+    ADD R5, R0, #-9         ; check if R0 holds 9
+    BRnz ADDOFFSET          ; branch to ADDOFFSET if number is less than 9
+TENOFF
+    LD R4, AOFFSET          ; load R4 with the offset for numbers 10 to 15 if the number is greater than 10
+
+ADDOFFSET
+    ADD R0, R0, R4          ; add the offset to the hex for the digit
+    OUT                     ; print the correct ASCII
+    ADD R2, R2, #-4         ; decrement digit counter
+    BRp BITSTRING           ; loop for remaining digits
+
+    AND R5, R5, #0          ;
+    ADD R5, R3, #0          ;
+
+    HALT
+
+NINEOFFSET    .FILL x0030            ; offset for numbers from 0 to 9
+AOFFSET       .FILL x0037            ; offset for numbers from 10 to 15
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;R0 - character input from keyboard
 ;R6 - current numerical output
-;
-;
 EVALUATE
+    ST R7, SAVER7   ;
+    AND R1, R1, #0  ;
+    AND R3, R3, #0  ;
+    AND R4, R4, #0  ;
 
-;your code goes here
+EQUALS
+    LD R6, EQUAL    ;
+    ADD R1, R0, R6  ;
+    BRnp SPACE      ;
+    JSR POP         ;
+    ;Check if stackTOP = stackSTART
+    ;Br invalid if not 0
+    ADD R3,R3,R0    ;
+    BRnzp PRINT_HEX ;
+    
+SPACE
+    LD R6, SPAC     ;
+    ADD R1, R0, R6  ;
+    BRnp NUMBER     ;
+    LD R7,SAVER7    ;
+    RET             ;
 
+NUMBER
+    LD R6, NINE     ;
+    ADD R1,R0,R6    ;
+    BRp PLUS        ;
+    LD R6, ZERO     ;
+    ADD R1,R0,R6    ;
+    BRn PLUS        ;
+    ADD R0,R0,R6    ;
+    JSR PUSH        ;
+    LD R7, SAVER7   ;
+    RET             ;
 
+SAVER7 .BLKW #1     ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 PLUS	
-;your code goes here
-	
+    LD R6, ADDI     ;
+    ADD R1,R0,R6    ;
+    BRnp MIN        ;
+    JSR POP         ;
+    ;Check Underflow
+    ADD R3,R3,R0    ;
+    JSR POP         ;
+    ;Check Underflow
+    ADD R4,R4,R0    ;
+    ADD R0,R3,R4    ;
+    JSR PUSH        ;
+    LD R7, SAVER7   ;
+    RET             ;
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 MIN	
-;your code goes here
-	
+    LD R6, SUB      ;
+    ADD R1,R0,R6    ;
+    BRnp MUL        ;
+    JSR POP         ;
+    ADD R3,R3,R0    ;
+    ;Check Underflow
+    JSR POP         ;
+    ;Check Underflow
+    ADD R4,R4,R0    ;
+    NOT R4,R4       ;
+    ADD R4,R4,#1    ;
+    ADD R0,R3,R4    ;
+    JSR PUSH        ;
+    LD R7, SAVER7   ;
+    RET             ;
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 MUL	
-;your code goes here
-	
+    LD R6, MULTI    ;
+    ADD R1,R0,R6    ;
+    BRnp DIV        ;
+    JSR POP         ;
+    ADD R3,R3,R0    ;
+    ;Check Underflow
+    JSR POP         ;
+    ;Check Underflow
+    ADD R4,R4,R0    ;
+                                                            
+    MULT_LOOP    ADD R0, R3, R0        ; add R3 to R0, store in R0
+    ADD R4, R4, #-1        ; decrement R4, used as mult counter
+    BRp MULT_LOOP        ; go to MULT_LOOP while R4 is non negative
+    
+    JSR PUSH                                                                                     
+    LD R7, SAVER7    ;
+    RET
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
-DIV	
-;your code goes here
-	
-	
+DIV
+    LD R6, DIVIDE   ;
+    ADD R1,R0,R6    ;
+    BRnp EXP        ;
+    JSR POP         ;
+    ADD R3,R3,R0    ;
+    ;Check Underflow
+    JSR POP         ;
+    ;Check Underflow
+    ADD R4,R4,R0    ;
+           
+    NOT R4, R4            ; not R4 for 2's complement
+    ADD R4, R4, #1        ; R4 = -R4
+
+DIV_LOOP
+    ADD R3, R3, R4        ; subtract R4 from R3
+    BRzn DIV_EXIT         ;
+    ADD R0, R0, #1        ; add one to quotient count
+    BRnzp DIV_LOOP        ; unconditionally return to DIV_LOOP
+
+    JSR PUSH              ;
+    LD R7, SAVER7         ;
+    RET
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 EXP
-;your code goes here
+    LD R6, EXPO     ;
+    ADD R1,R0,R6    ;
+    BRnp INVALID    ;
+    JSR POP         ;
+    ADD R3,R3,R0    ;
+    ;Check Underflow
+    JSR POP         ;
+    ;Check Underflow
+    ADD R4,R4,R0    ;
+    
+    JSR PUSH              ;
+    LD R7, SAVER7         ;
+    RET
+
+INVALID
+    LEA R0, INVAL   ;
+    PUTS            ;
+    HALT            ;
+
+INVAL  .STRINGZ "Invalid Expression"
+SPAC   .FILL #-32
+EQUAL  .FILL #-61
+ADDI   .FILL #-43
+SUB    .FILL #-45
+MULTI  .FILL #-42
+DIVIDE .FILL #-47
+EXPO   .FILL #-94
+ZERO   .FILL #-48
+NINE   .FILL #-57
 	
 ;IN:R0, OUT:R5 (0-success, 1-fail/overflow)
 ;R3: STACK_END R4: STACK_TOP
