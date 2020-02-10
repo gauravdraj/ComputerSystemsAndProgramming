@@ -154,11 +154,11 @@ MIN
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
-    ADD R3,R3,R0    ;
+    ADD R4,R4,R0    ;
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
-    ADD R4,R4,R0    ;
+    ADD R3,R3,R0    ;
 
     NOT R4,R4       ;
     ADD R4,R4,#1    ;
@@ -202,22 +202,22 @@ DIV
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
-    ADD R3,R3,R0    ;
+    ADD R4,R4,R0    ;
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
-    ADD R4,R4,R0    ;
+    ADD R3,R3,R0    ;
            
     NOT R4, R4            ; not R4 for 2's complement
     ADD R4, R4, #1        ; R4 = -R4
 
 DIV_LOOP
     ADD R3, R3, R4        ; subtract R4 from R3
-    BRzn DIV_EXIT         ;
+    BRnz EXIT_DIV          ;
     ADD R0, R0, #1        ; add one to quotient count
     BRnzp DIV_LOOP        ; unconditionally return to DIV_LOOP
 
-DIV_EXIT
+EXIT_DIV
     JSR PUSH              ;
     LD R7, SAVER7         ;
     RET
@@ -231,11 +231,11 @@ EXP
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
-    ADD R3,R3,R0    ;
+    ADD R4,R4,R0    ;
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
-    ADD R4,R4,R0    ;
+    ADD R3,R3,R0    ;
 
     AND R0, R0, #0        ; clear R0
     AND R5, R5, #0        ; clear R5
