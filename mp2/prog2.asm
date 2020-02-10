@@ -183,8 +183,10 @@ MUL
     ADD R5,R5,#0    ;
     BRp INVALID     ;
     ADD R4,R4,R0    ;
-                                                            
-    MULT_LOOP    ADD R0, R3, R0        ; add R3 to R0, store in R0
+    
+    AND R0, R0, #0  ;
+MULT_LOOP
+    ADD R0, R3, R0        ; add R3 to R0, store in R0
     ADD R4, R4, #-1        ; decrement R4, used as mult counter
     BRp MULT_LOOP        ; go to MULT_LOOP while R4 is non negative
     
