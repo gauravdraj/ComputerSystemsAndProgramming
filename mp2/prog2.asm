@@ -68,8 +68,7 @@ ADDOFFSET
     ADD R2, R2, #-4         ; decrement digit counter
     BRp BITSTRING           ; loop for remaining digits
 
-    AND R5, R5, #0          ;
-    ADD R5, R3, #0          ;
+    LD R5, PRINTVAL         ;
 
     HALT
 
@@ -89,9 +88,17 @@ EQUALS
     ADD R1, R0, R6  ;
     BRnp SPACE      ;
     JSR POP         ;
-    ;Check if stackTOP = stackSTART
-    ;Br invalid if not 0
+
+    AND R5, R5, #0		;clear R5
+	LD R3, STACK_START	;
+	LD R4, STACK_TOP	;
+	NOT R3, R3	    	;
+	ADD R3, R3, #1		;
+	ADD R3, R3, R4		;
+	BRnp INVALID		;
+    
     ADD R3,R3,R0    ;
+    ST R3, PRINTVAL ;
     BRnzp PRINT_HEX ;
     
 SPACE
@@ -113,6 +120,7 @@ NUMBER
     LD R7, SAVER7   ;
     RET             ;
 
+PRINTVAL .BLKW #1   ;
 SAVER7 .BLKW #1     ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
@@ -122,12 +130,16 @@ PLUS
     ADD R1,R0,R6    ;
     BRnp MIN        ;
     JSR POP         ;
-    ;Check Underflow
+    ADD R5,R5,#0    ; 
+    BRp INVALID     ;
     ADD R3,R3,R0    ;
     JSR POP         ;
-    ;Check Underflow
+    ADD R5,R5,#0    ; 
+    BRp INVALID     ;
     ADD R4,R4,R0    ;
+
     ADD R0,R3,R4    ;
+
     JSR PUSH        ;
     LD R7, SAVER7   ;
     RET             ;
@@ -140,14 +152,18 @@ MIN
     ADD R1,R0,R6    ;
     BRnp MUL        ;
     JSR POP         ;
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R3,R3,R0    ;
-    ;Check Underflow
     JSR POP         ;
-    ;Check Underflow
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R4,R4,R0    ;
+
     NOT R4,R4       ;
     ADD R4,R4,#1    ;
     ADD R0,R3,R4    ;
+
     JSR PUSH        ;
     LD R7, SAVER7   ;
     RET             ;
@@ -161,9 +177,11 @@ MUL
     BRnp DIV        ;
     JSR POP         ;
     ADD R3,R3,R0    ;
-    ;Check Underflow
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     JSR POP         ;
-    ;Check Underflow
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R4,R4,R0    ;
                                                             
     MULT_LOOP    ADD R0, R3, R0        ; add R3 to R0, store in R0
@@ -182,10 +200,12 @@ DIV
     ADD R1,R0,R6    ;
     BRnp EXP        ;
     JSR POP         ;
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R3,R3,R0    ;
-    ;Check Underflow
     JSR POP         ;
-    ;Check Underflow
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R4,R4,R0    ;
            
     NOT R4, R4            ; not R4 for 2's complement
@@ -197,6 +217,7 @@ DIV_LOOP
     ADD R0, R0, #1        ; add one to quotient count
     BRnzp DIV_LOOP        ; unconditionally return to DIV_LOOP
 
+DIV_EXIT
     JSR PUSH              ;
     LD R7, SAVER7         ;
     RET
@@ -208,20 +229,47 @@ EXP
     ADD R1,R0,R6    ;
     BRnp INVALID    ;
     JSR POP         ;
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R3,R3,R0    ;
-    ;Check Underflow
     JSR POP         ;
-    ;Check Underflow
+    ADD R5,R5,#0    ;
+    BRp INVALID     ;
     ADD R4,R4,R0    ;
-    
+
+    AND R0, R0, #0        ; clear R0
+    AND R5, R5, #0        ; clear R5
+    ADD R0, R3, #0        ; R0 = R3
+    ADD R4, R4, #-1       ; decrement to make it work
+    BRn ZEROCASE          ; branch to ZEROCASE if power is 0
+    BRz EXPDONE           ; branch to EXPDONE if power is 0
+                                                                        
+EXP_LOOP
+    AND R5, R5, #0        ; clear R5
+    ADD R5, R0, #0        ; R5 = R0
+    AND R0, R0, #0        ; clear R0
+                                                                                                                                        
+EXPMULT_LOOP
+    ADD R0, R3, R0        ; add R3 to R0, store the result in R0
+    ADD R5, R5, #-1       ; decrement multiplication counter
+    BRp EXPMULT_LOOP      ; go to EXPMULT_LOOP while R5 is positive
+    ADD R4, R4, #-1       ; decrement exponent counter
+    BRp EXP_LOOP          ; go to EXP_LOOP if R4 is positive
+    BRnzp EXPDONE         ; branch to EXPDONE unconditionally
+ 
+ZEROCASE    
+    AND R0, R0, #0        ; clear R0
+    ADD R0, R0, #1        ; R0 = 1
+
+EXPDONE
     JSR PUSH              ;
     LD R7, SAVER7         ;
     RET
 
 INVALID
-    LEA R0, INVAL   ;
-    PUTS            ;
-    HALT            ;
+    LEA R0, INVAL         ;
+    PUTS                  ;
+    HALT                  ;
 
 INVAL  .STRINGZ "Invalid Expression"
 SPAC   .FILL #-32
