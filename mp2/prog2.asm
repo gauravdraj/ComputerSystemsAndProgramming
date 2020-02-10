@@ -25,8 +25,8 @@
 .ORIG x3000	
 	
 GET_INPUT
-    GETC    ;
-    OUT     ;
+    GETC            ;
+    OUT             ;
     JSR EVALUATE    ;
     BRnzp GET_INPUT ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -186,11 +186,11 @@ MUL
     
     AND R0, R0, #0  ;
 MULT_LOOP
-    ADD R0, R3, R0        ; add R3 to R0, store in R0
-    ADD R4, R4, #-1        ; decrement R4, used as mult counter
+    ADD R0, R3, R0       ; add R3 to R0, store in R0
+    ADD R4, R4, #-1      ; decrement R4, used as mult counter
     BRp MULT_LOOP        ; go to MULT_LOOP while R4 is non negative
     
-    JSR PUSH                                                                                     
+    JSR PUSH         ;                                                                           
     LD R7, SAVER7    ;
     RET
 
