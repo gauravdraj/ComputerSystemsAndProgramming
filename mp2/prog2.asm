@@ -203,18 +203,22 @@ DIV
     ADD R5,R5,#0    ;
     BRp INVALID     ;
     ADD R4,R4,R0    ;
+    BRz INVALID     ;
     JSR POP         ;
     ADD R5,R5,#0    ;
     BRp INVALID     ;
     ADD R3,R3,R0    ;
-           
-    NOT R4, R4            ; not R4 for 2's complement
-    ADD R4, R4, #1        ; R4 = -R4
+    
+    AND R0, R0, #0  ;
+    NOT R4, R4      ; not R4 for 2's complement
+    ADD R4, R4, #1  ; R4 = -R4
 
 DIV_LOOP
     ADD R3, R3, R4        ; subtract R4 from R3
-    BRnz EXIT_DIV          ;
+    BRn EXIT_DIV          ;
     ADD R0, R0, #1        ; add one to quotient count
+    ADD R3, R3, #0        ;
+    BRz EXIT_DIV          ;
     BRnzp DIV_LOOP        ; unconditionally return to DIV_LOOP
 
 EXIT_DIV
