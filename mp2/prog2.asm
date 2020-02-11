@@ -296,7 +296,7 @@ PUSH
 	ST R4, PUSH_SaveR4	;save R4
 	AND R5, R5, #0		;
 	LD R3, STACK_END	;
-	LD R4, STACk_TOP	;
+	LD R4, STACK_TOP	;
 	ADD R3, R3, #-1		;
 	NOT R3, R3		;
 	ADD R3, R3, #1		;
