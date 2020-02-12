@@ -13,22 +13,22 @@
 
 
 ; Register Table
-; R0:
-; R1:
-; R2:
-; R3:
-; R4:
-; R5:
-; R6:
-; R7:
+; R0: I/O for PUSH, POP, GETC, and OUT
+; R1: Check for character matching
+; R2: Digit Counter
+; R3: Operand and STACK_START holder
+; R4: Operand and STACK_TOP holder
+; R5: Underflow Indicator
+; R6: ASCII offset holder
+; R7: PC holder for RET
 
 .ORIG x3000	
 	
 GET_INPUT
-    GETC            ;
-    OUT             ;
-    JSR EVALUATE    ;
-    BRnzp GET_INPUT ;
+    GETC            ; get input from user, store in R0
+    OUT             ; echo character to string
+    JSR EVALUATE    ; jump to evaluate
+    BRnzp GET_INPUT ; return to GET_INPUT, keep getting chars from user
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;R3- value to print in hexadecimal
 PRINT_HEX
@@ -68,7 +68,7 @@ ADDOFFSET
     ADD R2, R2, #-4         ; decrement digit counter
     BRp BITSTRING           ; loop for remaining digits
 
-    LD R5, PRINTVAL         ;
+    LD R5, PRINTVAL         ; R5 holds output
 
     HALT
 
@@ -78,170 +78,170 @@ AOFFSET       .FILL x0037            ; offset for numbers from 10 to 15
 ;R0 - character input from keyboard
 ;R6 - current numerical output
 EVALUATE
-    ST R7, SAVER7   ;
-    AND R1, R1, #0  ;
-    AND R3, R3, #0  ;
-    AND R4, R4, #0  ;
+    ST R7, SAVER7   ; save R7 (nested subroutine)
+    AND R1, R1, #0  ; clear R1
+    AND R3, R3, #0  ; clear R3
+    AND R4, R4, #0  ; clear R4
 
 EQUALS
-    LD R6, EQUAL    ;
-    ADD R1, R0, R6  ;
-    BRnp SPACE      ;
-    JSR POP         ;
+    LD R6, EQUAL    ; R6 = -ASCII for equals
+    ADD R1, R0, R6  ; check if char entered is =
+    BRnp SPACE      ; if not =, go to SPACE
+    JSR POP         ; if =, pop value from stack
 
-    AND R5, R5, #0		;clear R5
-	LD R3, STACK_START	;
-	LD R4, STACK_TOP	;
-	NOT R3, R3	    	;
-	ADD R3, R3, #1		;
-	ADD R3, R3, R4		;
-	BRnp INVALID		;
+    AND R5, R5, #0		; clear R5
+	LD R3, STACK_START	; R3 holds starting address of stack
+	LD R4, STACK_TOP	; R4 holds stack top pointer
+	NOT R3, R3	    	; not R3 for 2's complement
+	ADD R3, R3, #1		; R3 = -start address of stack
+	ADD R3, R3, R4		; subtract start from top pointer
+	BRnp INVALID		; if non zero, the expression is invalid
     
-    ADD R3,R3,R0    ;
-    ST R3, PRINTVAL ;
-    BRnzp PRINT_HEX ;
+    ADD R3,R3,R0    ; add char to -start, store in R3
+    ST R3, PRINTVAL ; store R3 in PRINTVAL
+    BRnzp PRINT_HEX ; unconditionally go to PRINT_HEX
     
 SPACE
-    LD R6, SPAC     ;
-    ADD R1, R0, R6  ;
-    BRnp NUMBER     ;
-    LD R7,SAVER7    ;
-    RET             ;
+    LD R6, SPAC     ; R6 holds -ASCII for space
+    ADD R1, R0, R6  ; check if char entered is space
+    BRnp NUMBER     ; if not space, go to NUMBER
+    LD R7,SAVER7    ; restore R7
+    RET             ; return
 
 NUMBER
-    LD R6, NINE     ;
-    ADD R1,R0,R6    ;
-    BRp PLUS        ;
-    LD R6, ZERO     ;
-    ADD R1,R0,R6    ;
-    BRn PLUS        ;
-    ADD R0,R0,R6    ;
-    JSR PUSH        ;
-    LD R7, SAVER7   ;
-    RET             ;
+    LD R6, NINE     ; R6 holds -ASCII for 9
+    ADD R1,R0,R6    ; check if char is 9
+    BRp PLUS        ; if over ASCII 9, go to PLUS
+    LD R6, ZERO     ; R6 holds -ASCII for 0
+    ADD R1,R0,R6    ; check if char is 0
+    BRn PLUS        ; if under ASCII 0, go to PLUS
+    ADD R0,R0,R6    ; add char to -ASCII 0, store in R0
+    JSR PUSH        ; push R0 to stack
+    LD R7, SAVER7   ; restore R7
+    RET             ; return
 
-PRINTVAL .BLKW #1   ;
-SAVER7 .BLKW #1     ;
+PRINTVAL .BLKW #1   ; location of value to print
+SAVER7 .BLKW #1     ; location to save R7 to
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 PLUS	
-    LD R6, ADDI     ;
-    ADD R1,R0,R6    ;
-    BRnp MIN        ;
-    JSR POP         ;
-    ADD R5,R5,#0    ; 
-    BRp INVALID     ;
-    ADD R3,R3,R0    ;
-    JSR POP         ;
-    ADD R5,R5,#0    ; 
-    BRp INVALID     ;
-    ADD R4,R4,R0    ;
+    LD R6, ADDI     ; R6 holds -ASCII for +
+    ADD R1,R0,R6    ; check if char is +
+    BRnp MIN        ; if not +, go to MIN
+    JSR POP         ; pop value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R3,R3,R0    ; R3 holds value popped from stack
+    JSR POP         ; pop value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R4,R4,R0    ; R4 holds second value popped from stack
 
-    ADD R0,R3,R4    ;
+    ADD R0,R3,R4    ; add two values popped from stack, store in R0
 
-    JSR PUSH        ;
-    LD R7, SAVER7   ;
-    RET             ;
+    JSR PUSH        ; push sum to stack
+    LD R7, SAVER7   ; restore R7
+    RET             ; return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 MIN	
-    LD R6, SUB      ;
-    ADD R1,R0,R6    ;
-    BRnp MUL        ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R4,R4,R0    ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R3,R3,R0    ;
+    LD R6, SUB      ; R6 holds -ASCII for -
+    ADD R1,R0,R6    ; check if char is -
+    BRnp MUL        ; if not -, go to MUL
+    JSR POP         ; pop value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R4,R4,R0    ; R4 holds first value popped
+    JSR POP         ; pop value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R3,R3,R0    ; R3 holds second value popped
 
-    NOT R4,R4       ;
-    ADD R4,R4,#1    ;
-    ADD R0,R3,R4    ;
+    NOT R4,R4       ; NOT R4 for 2's complement
+    ADD R4,R4,#1    ; R4 = -R4
+    ADD R0,R3,R4    ; R0 holds R3 - R4
 
-    JSR PUSH        ;
-    LD R7, SAVER7   ;
-    RET             ;
+    JSR PUSH        ; push difference to stack
+    LD R7, SAVER7   ; restore R7
+    RET             ; return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 MUL	
-    LD R6, MULTI    ;
-    ADD R1,R0,R6    ;
-    BRnp DIV        ;
-    JSR POP         ;
-    ADD R3,R3,R0    ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R4,R4,R0    ;
+    LD R6, MULTI    ; load R6 with -ASCII for *
+    ADD R1,R0,R6    ; check if char is *
+    BRnp DIV        ; if not *, go to DIV
+    JSR POP         ; pop value from stack
+    ADD R3,R3,R0    ; store first popped value into R3
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    JSR POP         ; pop second value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R4,R4,R0    ; R4 holds second value popped
     
-    AND R0, R0, #0  ;
+    AND R0, R0, #0  ; clear R0
 MULT_LOOP
     ADD R0, R3, R0       ; add R3 to R0, store in R0
     ADD R4, R4, #-1      ; decrement R4, used as mult counter
     BRp MULT_LOOP        ; go to MULT_LOOP while R4 is non negative
     
-    JSR PUSH         ;                                                                           
-    LD R7, SAVER7    ;
-    RET
+    JSR PUSH         ; push R0 to stack                                                                          
+    LD R7, SAVER7    ; restore R7
+    RET		     ; return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 DIV
-    LD R6, DIVIDE   ;
-    ADD R1,R0,R6    ;
-    BRnp EXP        ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R4,R4,R0    ;
-    BRz INVALID     ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R3,R3,R0    ;
+    LD R6, DIVIDE   ; R6 holds -ASCII for /
+    ADD R1,R0,R6    ; check if char is /
+    BRnp EXP        ; if not /, go to EXP
+    JSR POP         ; pop first value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R4,R4,R0    ; R4 holds first value popped
+    BRz INVALID     ; if R4 is 0, go to INVALID
+    JSR POP         ; pop second value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R3,R3,R0    ; R3 holds second value popped
     
-    AND R0, R0, #0  ;
+    AND R0, R0, #0  ; clear R0
     NOT R4, R4      ; not R4 for 2's complement
     ADD R4, R4, #1  ; R4 = -R4
 
 DIV_LOOP
     ADD R3, R3, R4        ; subtract R4 from R3
-    BRn EXIT_DIV          ;
+    BRn EXIT_DIV          ; go to EXIT_DIV if difference is negative
     ADD R0, R0, #1        ; add one to quotient count
-    ADD R3, R3, #0        ;
-    BRz EXIT_DIV          ;
+    ADD R3, R3, #0        ; set CC based on R3
+    BRz EXIT_DIV          ; go to EXIT_DIV if R3 is 0
     BRnzp DIV_LOOP        ; unconditionally return to DIV_LOOP
 
 EXIT_DIV
-    JSR PUSH              ;
-    LD R7, SAVER7         ;
-    RET
+    JSR PUSH              ; push R0 to stack
+    LD R7, SAVER7         ; restore R7
+    RET			  ; return
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;input R3, R4
 ;out R0
 EXP
-    LD R6, EXPO     ;
-    ADD R1,R0,R6    ;
-    BRnp INVALID    ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R4,R4,R0    ;
-    JSR POP         ;
-    ADD R5,R5,#0    ;
-    BRp INVALID     ;
-    ADD R3,R3,R0    ;
+    LD R6, EXPO     ; R6 holds -ASCII for ^
+    ADD R1,R0,R6    ; check if char is ^
+    BRnp INVALID    ; if not ^, go to INVALID
+    JSR POP         ; pop first value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R4,R4,R0    ; R4 holds first value popped
+    JSR POP         ; pop second value from stack
+    ADD R5,R5,#0    ; set CC based on R5
+    BRp INVALID     ; if underflow, go to INVALID
+    ADD R3,R3,R0    ; R3 holds second value popped
 
     AND R0, R0, #0        ; clear R0
     AND R5, R5, #0        ; clear R5
@@ -268,14 +268,14 @@ ZEROCASE
     ADD R0, R0, #1        ; R0 = 1
 
 EXPDONE
-    JSR PUSH              ;
-    LD R7, SAVER7         ;
-    RET
+    JSR PUSH              ; push R0 to stack
+    LD R7, SAVER7         ; restore R7
+    RET			  ; return
 
 INVALID
-    LEA R0, INVAL         ;
-    PUTS                  ;
-    HALT                  ;
+    LEA R0, INVAL         ; load R0 with the starting address of INVAL
+    PUTS                  ; print string to console
+    HALT                  ; halt the LC3
 
 INVAL  .STRINGZ "Invalid Expression"
 SPAC   .FILL #-32
