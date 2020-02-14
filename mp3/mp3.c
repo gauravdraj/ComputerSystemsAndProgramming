@@ -2,7 +2,7 @@
  * The row to print is inputted by the user. Every value 
  * in the row is separated with spaces */
 
-/* Partner: pranay2 */
+/* partner: pranay2 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,16 +19,16 @@ int main()
   //Initializing variables
   unsigned long i,j,out;
  
-  //Loop to print character and space based on calculation
+  //Loop to print character and space based on number of rows
   for (i=0; i<= row; ++i)
   {
       //reset value to 1 at beginning of new row
       out = 1;
 
-      //Loop to calculate value at given row and index
+      //Loop to assign correct value to out
       for (j=1; j<=i; ++j)
       {
-          //Formula to calculate value at row and index
+          //Formula to calculate value at index j based on row
           out = (out * (row + 1 - j)) / j;
       }
       //Print value
