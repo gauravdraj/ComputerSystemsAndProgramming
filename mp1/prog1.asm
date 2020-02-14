@@ -5,7 +5,7 @@
 ; Your assignment for this program is to combine these two pieces of 
 ; code to print the histogram to the monitor.
 ;
-; If you finish your program, 
+; If you finish your program,
 ;    ** commit a working version to your repository  **
 ;    ** (and make a note of the repository version)! **
 
