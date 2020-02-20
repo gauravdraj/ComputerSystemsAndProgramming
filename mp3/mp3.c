@@ -2,8 +2,6 @@
  * The row to print is inputted by the user. Every value 
  * in the row is separated with spaces */
 
-/* partner: pranay2 */
-
 #include <stdio.h>
 #include <stdlib.h>
 
