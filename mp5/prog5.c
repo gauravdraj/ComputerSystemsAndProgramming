@@ -4,14 +4,17 @@
  *           student code -- GOLD VERSION by Steven S. Lumetta
  */
 
+/* INTRO PARAGRAPH
+ * 
+ *
+ *
+ */
 
 /*
  * The functions that you must write are defined in the header file.
  * Blank function prototypes with explanatory headers are provided
  * in this file to help you get started.
  */
-
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -87,9 +90,11 @@ int set_seed (const char seed_str[]) {
     int seed;
     char post[2];
     if (sscanf (seed_str, "%d%1s", &seed, post) != 1) {
-      // your code here
+        printf("set_seed: invalid seed\n");
+        return 0;
     }
-    // your code here
+    srand(seed);
+    return 1;
 }
 
 
@@ -107,12 +112,12 @@ int set_seed (const char seed_str[]) {
  * SIDE EFFECTS: records the solution in the static solution variables for use by make_guess, set guess_number
  */
 void start_game () {
-    //your code here
+    
 }
 
 /*
  * make_guess -- This function is called by main.c after the user types in a guess.
- *               The guess is stored in the string guess_str. 
+ *               The guess is stored in the string guess_str. a
  *               The function must calculate the number of perfect and misplaced matches
  *               for a guess, given the solution recorded earlier by start_game
  *               The guess must be valid (contain only 4 strings from pool). If it is valid
@@ -130,7 +135,7 @@ void start_game () {
  *               (NOTE: the output format MUST MATCH EXACTLY, check the wiki writeup)
  */
 int make_guess (const char guess_str[]) {
-  // your code here
+    return 0;
 }
 
 
