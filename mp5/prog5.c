@@ -97,27 +97,40 @@ int set_seed (const char seed_str[]) {
     return 1;
 }
 
-
 /*
- * start_game -- This function is called by main.c after set_seed but before the user makes guesses.
- *               This function creates the four solution numbers using the approach
- *               described in the wiki specification (using rand())
- *               The four solution numbers should be stored in the static variables defined above. 
- *               The values at the pointers should also be set to the solution numbers.
- *               The guess_number should be initialized to 1 (to indicate the first guess)
- *               The score should be initialized to -1.  
- * INPUTS: none
- * OUTPUTS: none
- * RETURN VALUE: none
- * SIDE EFFECTS: records the solution in the static solution variables for use by make_guess, set guess_number
+ *  start_game -- This function is called by main.c after set_seed but before the user makes guesses.
+ *  This function creates the four solution numbers using the approach
+ *  described in the wiki specification (using rand())
+ *  The four solution numbers should be stored in the static variables defined above. 
+ *  The values at the pointers should also be set to the solution numbers.
+ *  The guess_number should be initialized to 1 (to indicate the first guess)
+ *  The score should be initialized to -1.  
+ *  INPUTS: none
+ *  OUTPUTS: none
+ *  RETURN VALUE: none
+ *  SIDE EFFECTS: records the solution in the static solution variables for use by make_guess, set guess_number
  */
-void start_game () {
-    
+void start_game ()
+{
+   guess_number = 1;
+   max_score = -1;
+   int i = 0;
+   int sol1 = rand() % 8;
+   int sol2 = rand() % 8;
+   int sol3 = rand() % 8;
+   int sol4 = rand() % 8; 
+   for (i=0; i<10; i++)
+   {
+   solutions[0][i] = pool[sol1][i];
+   solutions[1][i] = pool[sol2][i];
+   solutions[2][i] = pool[sol3][i];
+   solutions[3][i] = pool[sol4][i];
+   }
 }
 
 /*
  * make_guess -- This function is called by main.c after the user types in a guess.
- *               The guess is stored in the string guess_str. a
+ *               The guess is stored in the string guess_str. 
  *               The function must calculate the number of perfect and misplaced matches
  *               for a guess, given the solution recorded earlier by start_game
  *               The guess must be valid (contain only 4 strings from pool). If it is valid
@@ -135,7 +148,46 @@ void start_game () {
  *               (NOTE: the output format MUST MATCH EXACTLY, check the wiki writeup)
  */
 int make_guess (const char guess_str[]) {
-    return 0;
+    int valid = 0;
+    for (int i=0; i<4; i++)
+    {
+        char comp = guess_str[i];
+        valid = is_valid(&comp);
+        if (valid != 1) 
+        {
+            printf("make_guess: invalid guess\n");
+            return 0;
+        }
+    }
+
+    int perfect = 0;
+    int misplaced = 0;
+    int currentscore = 0;
+
+    for (int i = 0; i<4; i++)
+    {
+        if (guess_str[i] == *solutions[i])
+        {
+            ++perfect;
+            currentscore += 1000;
+            continue;
+        }
+        for (int j = 0; j<4; j++)
+        {
+            if (guess_str[i] == *solutions[j])
+            {
+                ++misplaced;
+                currentscore += 100;
+            }
+        }
+    }
+    
+    if (currentscore > max_score) max_score = currentscore;
+    printf("With guess %d, you got %d perfect matches and %d misplaced matches.\nYour score is %d and current max score is %d.",guess_number,perfect,misplaced,currentscore,max_score);
+    ++guess_number;
+    if (perfect == 4) return 2;
+    
+    return 1;
 }
 
 
