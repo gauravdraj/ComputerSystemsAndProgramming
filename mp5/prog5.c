@@ -177,7 +177,7 @@ int make_guess (const char guess_str[]) {
                 for (int j = 0; j < 4; j++) {
                     if (strcmp(guesses[i], solutions[j]) == 0 && matchedSolution[j] == 0) { // for every unmatched solution, if a guess = a solution
                         matchedSolution[j] = 1;
-                        matchedGuess[i] = 1; //mark indeces as matched
+                        matchedGuess[i] = 1; //mark indices as matched
                         ++misplacedMatches; // increase misplaced matches if answers are right but indeces don't match
                     }
                 }
