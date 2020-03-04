@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "prog5.h"
 
@@ -29,6 +30,7 @@ char* pool[] = {"Vader", "Padme", "R2-D2", "C-3PO", "Jabba", "Dooku", "Lando", "
  * INPUT: none
  * OUTPUT: none
  */
+
 void print_pool() {
     printf("Valid term to guess:\n\t");
     for(int i = 0; i < 8 ; ++i) {
@@ -149,15 +151,53 @@ void start_game ()
  */
 int make_guess (const char guess_str[]) {
     int valid = 0;
-    for (int i=0; i<4; i++)
+   /* char* guesses = NULL;
+    strcpy(guesses,guess_str);
+    char* substring = NULL;
+    substring = strtok(guesses, " \n");
+    while(substring!=NULL)
     {
-        char comp = guess_str[i];
-        valid = is_valid(&comp);
-        if (valid != 1) 
+        if (is_valid(substring))
+        {
+            valid += 1;
+        }
+        substring = strtok(NULL, " \n");
+    }
+
+        valid = is_valid(substring);
+        if (valid == 0) 
         {
             printf("make_guess: invalid guess\n");
             return 0;
         }
+         substring = strtok((char*)guess_str,"\n");
+    }*/
+
+    char sol1[10], sol2[10], sol3[10], sol4[10];
+    char post[2]; 
+    if (sscanf (guess_str,"%s%s%s%s%1s",sol1,sol2,sol3,sol4,post) != 4) {
+        printf("make_guess: invalid guess\n");
+        return 0;
+    }
+    
+/*
+    char* guesses[4] = {sol1, sol2, sol3, sol4};
+    
+    for (int i = 0; i<4; i++)
+    {   
+        if (is_valid(guesses[i])==1) ++valid;
+    }*/
+
+    if (is_valid(&sol1)==1) ++valid;
+    if (is_valid(&sol2)==1) ++valid;
+    if (is_valid(&sol3)==1) ++valid;
+    if (is_valid(&sol4)==1) ++valid;
+    
+
+    if (valid != 4)
+    {   
+        printf("make_guess: invalid guess\n");
+        return 0;
     }
 
     int perfect = 0;
@@ -189,5 +229,3 @@ int make_guess (const char guess_str[]) {
     
     return 1;
 }
-
-
