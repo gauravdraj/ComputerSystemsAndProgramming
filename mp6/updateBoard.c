@@ -13,6 +13,8 @@
  */
 
 int countLiveNeighbor(int* board, int boardRowSize, int boardColSize, int row, int col){
+    int alive = 0;
+    for (rows)
 }
 /*
  * Update the game board to the next step.
