@@ -13,6 +13,10 @@ int is_val_in_row(const int val, const int i, const int sudoku[9][9]) {
   assert(i>=0 && i<9);
 
   // BEG TODO
+  int j;
+  for (j = 0; j < 9; j++) {
+    if (sudoku[i][j] == val) return 1;
+  }
   
   return 0;
   // END TODO
@@ -25,6 +29,10 @@ int is_val_in_col(const int val, const int j, const int sudoku[9][9]) {
   assert(j>=0 && j<9);
 
   // BEG TODO
+  int i;
+  for (i = 0; i < 9; i++) {
+    if (sudoku[i][j] == val) return 1;
+  }
   
   return 0;
   // END TODO
@@ -37,6 +45,19 @@ int is_val_in_3x3_zone(const int val, const int i, const int j, const int sudoku
   assert(i>=0 && i<9);
   
   // BEG TODO
+  int sectionRow, sectionCol;
+  sectionRow = 3 * (i / 3);
+  sectionCol = 3 * (j / 3);
+  
+  int row, col;
+  for (row = 0; row < 3; row++) {
+    for (col = 0; col < 3; col++) {
+      if (sudoku[sectionRow + row][sectionCol + col] == val) return 1;
+    }
+  }
+  return 0;
+
+
   
   return 0;
   // END TODO
@@ -49,6 +70,10 @@ int is_val_valid(const int val, const int i, const int j, const int sudoku[9][9]
   assert(i>=0 && i<9 && j>=0 && j<9);
 
   // BEG TODO
+  int rowValid = is_val_in_row(val, i, sudoku);
+  int colValid = is_val_in_col(val, j, sudoku);
+  int secValid = is_val_in_3x3_zone(val, i, j, sudoku);
+  if (rowValid == 1 || colValid == 1 || secValid == 1) return 0;
   return 1;
   // END TODO
 }
@@ -58,6 +83,26 @@ int is_val_valid(const int val, const int i, const int j, const int sudoku[9][9]
 int solve_sudoku(int sudoku[9][9]) {
 
   // BEG TODO.
+  int i, j, num;
+  int flag = 0;
+  for (i = 0; i < 9; i++) {
+    for (j = 0; j < 9; j++) {
+      if (sudoku[i][j] == 0) flag = 1;
+    }
+  }
+  if (flag == 0) return 1;
+
+  for (num = 1; num <= 9; num++) {
+    for (i = 0; i < 9; i++) {
+      for (j = 0; j < 9; j++) {
+        if (sudoku[i][j] == 0 && is_val_valid(num, i, j, sudoku) == 1) {
+          sudoku[i][j] = num;
+          if (solve_sudoku(sudoku) == 1) return 1;
+          sudoku[i][j] = 0;
+        }
+      }
+    }
+  }
 
   return 0;
   // END TODO.
@@ -87,8 +132,3 @@ void parse_sudoku(const char fpath[], int sudoku[9][9]) {
   }
   fclose(reader);
 }
-
-
-
-
-
