@@ -1,5 +1,5 @@
 /*
-MP6 is implementing code for the game of life. There are three functions
+MP6 involves implementing code for the game of life. There are three functions
 here, countLiveNeighbor, updateBoard, and aliveStable. countLiveNeighbor
 goes through all elements in the row above and below the specified element
 (provided that the row and column are in bounds) and increases the number of
