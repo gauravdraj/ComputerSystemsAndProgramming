@@ -84,23 +84,25 @@ int solve_sudoku(int sudoku[9][9]) {
 
   // BEG TODO.
   int i, j, num;
+  int nonFilledRow, nonFilledColumn;
   int flag = 0;
   for (i = 0; i < 9; i++) {
     for (j = 0; j < 9; j++) {
-      if (sudoku[i][j] == 0) flag = 1;
+      if (sudoku[i][j] == 0) 
+      {
+        flag = 1;
+        nonFilledRow = i;
+        nonFilledColumn = j;
+      }
     }
   }
   if (flag == 0) return 1;
 
   for (num = 1; num <= 9; num++) {
-    for (i = 0; i < 9; i++) {
-      for (j = 0; j < 9; j++) {
-        if (sudoku[i][j] == 0 && is_val_valid(num, i, j, sudoku) == 1) {
-          sudoku[i][j] = num;
+    if (sudoku[nonFilledRow][nonFilledColumn] == 0 && is_val_valid(num, nonFilledRow, nonFilledColumn, sudoku) == 1) {
+          sudoku[nonFilledRow][nonFilledColumn] = num;
           if (solve_sudoku(sudoku) == 1) return 1;
-          sudoku[i][j] = 0;
-        }
-      }
+          sudoku[nonFilledRow][nonFilledColumn] = 0;
     }
   }
 
