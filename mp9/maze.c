@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "maze.h"
 
-
 /*
  * createMaze -- Creates and fills a maze structure from the given file
  * INPUTS:       fileName - character array containing the name of the maze file
@@ -13,7 +12,41 @@
 maze_t * createMaze(char * fileName)
 {
     // Your code here. Make sure to replace following line with your own code.
-    return NULL;
+    int rows, cols;
+    FILE *mazefile = fopen(fileName, "r");
+    fscanf(mazefile,"%d %d", &cols, &rows);
+
+    maze_t *newMaze = malloc(sizeof(maze_t)); 
+    newMaze -> height = rows;
+    newMaze -> width = cols;
+    newMaze -> cells = (char**)malloc(rows * sizeof(char*));
+    
+    int i, j;
+    char c;
+    for (i = 0; i < rows; i++) {
+        newMaze -> cells[i] = (char*)malloc(cols * sizeof(char));
+        for (j = 0; j < cols; j++) {
+            c = fgetc(mazefile);
+            if (c == '\n') {
+                j--;
+                continue;
+            }
+            newMaze -> cells[i][j] = c;
+            if (c == START)
+            {
+                newMaze -> startRow = i;
+                newMaze -> startColumn = j;
+            }
+            if (c == END)
+            {
+                newMaze -> endRow = i;
+                newMaze -> endColumn = j;
+            }
+
+        }
+    }
+    fclose (mazefile);
+    return newMaze;
 }
 
 /*
@@ -25,7 +58,12 @@ maze_t * createMaze(char * fileName)
  */
 void destroyMaze(maze_t * maze)
 {
-    // Your code here.
+    int i;
+    for (i=0; i < maze -> height; i++) {
+        free (maze -> cells[i]);
+    }
+    free (maze -> cells);
+    free(maze);
 }
 
 /*
@@ -39,7 +77,16 @@ void destroyMaze(maze_t * maze)
  */
 void printMaze(maze_t * maze)
 {
-    // Your code here.
+    int row, col, i, j;
+    row = maze -> height;
+    col = maze -> width;
+
+    for (i = 0; i < row; i++) {
+        for (j = 0; j < col; j++) {
+            printf("%c", maze -> cells [i][j]);
+        }
+        printf("\n");
+    }
 }
 
 /*
@@ -54,5 +101,18 @@ void printMaze(maze_t * maze)
 int solveMazeDFS(maze_t * maze, int col, int row)
 {
     // Your code here. Make sure to replace following line with your own code.
+    if (row < 0 || col < 0 || row >= maze -> height || col >= maze -> width) return 0;
+    if (maze -> cells[row][col] == WALL || maze -> cells[row][col] == PATH || maze -> cells[row][col] == VISITED) return 0;
+    if (maze -> cells[row][col] == END) {
+        maze -> cells[maze -> startRow][maze -> startColumn] = START;
+        return 1;
+    } else maze -> cells[row][col] = PATH;
+
+    if (solveMazeDFS(maze,col-1,row) == 1) return 1;
+    if (solveMazeDFS(maze,col+1,row) == 1) return 1;
+    if (solveMazeDFS(maze,col,row-1) == 1) return 1;
+    if (solveMazeDFS(maze,col,row+1) == 1) return 1;
+    if (maze -> cells[row][col] != START) maze -> cells[row][col] = VISITED;
+
     return 0;
 }
