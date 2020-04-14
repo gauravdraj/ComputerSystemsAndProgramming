@@ -173,11 +173,13 @@ sp_tuples * mult_tuples(sp_tuples * matA, sp_tuples * matB){
 	
 void destroy_tuples(sp_tuples * mat_t){
 	sp_tuples_node* current = mat_t -> tuples_head;
-    while (current != NULL) {
+    sp_tuples_node* temp = NULL;
+    while (current -> next != NULL) {
+        temp = current; 
         current = current -> next; 
-        free(current);
+        free(temp);
     }
-    free(mat_t -> tuples_head);
+    free(current);
     free(mat_t);
     return;
 }  
