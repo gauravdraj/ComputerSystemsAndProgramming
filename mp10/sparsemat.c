@@ -77,15 +77,10 @@ void set_tuples(sp_tuples * mat_t, int row, int col, double value)
     }
     sp_tuples_node* current = mat_t -> tuples_head;
     while (current != NULL) {
-        if (current == mat_t -> tuples_head && current -> next == NULL) {
+        if (current == mat_t -> tuples_head) {
             if (row < current -> row || (row == current -> row && col < current -> col)) {
                 tuple -> next = mat_t -> tuples_head;
                 mat_t -> tuples_head = tuple;
-                ++(mat_t -> nz);
-                return;
-            }
-            else {
-                (mat_t -> tuples_head) -> next = tuple;
                 ++(mat_t -> nz);
                 return;
             }
