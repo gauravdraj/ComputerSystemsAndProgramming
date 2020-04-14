@@ -47,22 +47,23 @@ void remove_node(sp_tuples* mat_t, int row, int col) {
             temp = current;
             mat_t -> tuples_head = current -> next;
             free(temp);
+            --(mat_t -> nz);
             return;
         }
         else if ((current -> next) -> row == row && (current -> next) -> col == col) {
             temp = current -> next;
             current -> next = (current -> next) -> next;
             free(temp);
+            --(mat_t -> nz);
             return;
         }
         current = current -> next;
-    }
-    --(mat_t -> nz);
+    }  
 }
 
 void set_tuples(sp_tuples * mat_t, int row, int col, double value)
 {
-    if (value == 0 && gv_tuples(mat_t, row, col) !=0) remove_node(mat_t, row, col); 
+    if (value == 0 && gv_tuples(mat_t, row, col) !=0) remove_node(mat_t, row, col);
     if (value == 0) return;
     sp_tuples_node* tuple = (sp_tuples_node*)malloc(sizeof(sp_tuples_node));
     tuple -> row = row;
@@ -71,16 +72,12 @@ void set_tuples(sp_tuples * mat_t, int row, int col, double value)
     tuple -> next = NULL;
     if (mat_t -> tuples_head == NULL) {
         mat_t -> tuples_head = tuple;
+        (mat_t -> nz) = (mat_t -> nz) + 1;
         return;
     }
     sp_tuples_node* current = mat_t -> tuples_head;
     while (current != NULL) {
-        if (current -> row == row && current -> col == col) {
-            current -> value = value;
-            free(tuple);
-            return;
-        }
-        else if (current == mat_t -> tuples_head && current -> next == NULL) {
+        if (current == mat_t -> tuples_head && current -> next == NULL) {
             if (row < current -> row || (row == current -> row && col < current -> col)) {
                 tuple -> next = mat_t -> tuples_head;
                 mat_t -> tuples_head = tuple;
@@ -89,16 +86,34 @@ void set_tuples(sp_tuples * mat_t, int row, int col, double value)
             }
             else {
                 (mat_t -> tuples_head) -> next = tuple;
-                //++(mat_t -> nz);
+                ++(mat_t -> nz);
                 return;
             }
         }
-        else if (current -> next == NULL){
+        if (current -> row == row && current -> col == col) {
+            current -> value = value;
+            free(tuple);
+            return;
+        }
+        if (current -> next == NULL){
             current -> next = tuple;
             ++(mat_t -> nz);
             return;
         }
-        else if ((current -> next) -> row >= row) {
+        /*if (((current -> next) -> row >= row) && (current == mat_t -> tuples_head)) {
+             if ((current -> row == row && (current -> next) -> col > col) || (current -> next -> row) > row) {
+                tuple -> next = mat_t -> tuples_head;
+                mat_t -> tuples_head = tuple;
+                ++(mat_t -> nz);
+                return;
+            }
+            else {
+                (mat_t -> tuples_head) -> next = tuple;
+                ++(mat_t -> nz);
+                return;
+            }
+        } **/
+        if ((current -> next) -> row >= row) {
             if ((current -> row == row && (current -> next) -> col > col) || (current -> next -> row) > row) {
                 tuple -> next = current -> next;
                 current -> next = tuple;
@@ -118,6 +133,7 @@ void save_tuples(char * file_name, sp_tuples * mat_t)
     sp_tuples_node* current = mat_t -> tuples_head;
     while (current != NULL) {
         fprintf(data, "%d %d %lf\n", current -> row, current -> col, current -> value);
+        current = current -> next;
     }
     fclose(data);
 	return;
@@ -135,12 +151,14 @@ sp_tuples * add_tuples(sp_tuples * matA, sp_tuples * matB){
     sp_tuples_node* currentA = matA -> tuples_head;
     while(currentA != NULL) {
         set_tuples(retmat, currentA -> row, currentA -> col, currentA -> value);
+        currentA = currentA -> next;
     }
     sp_tuples_node* currentB = matB -> tuples_head;
     while (currentB != NULL) {
         double valInB = gv_tuples(matB, currentB -> row, currentB -> col);
         double valInC = gv_tuples(retmat, currentB -> row, currentB -> col);
         set_tuples(retmat, currentB -> row, currentB -> col, valInC + valInB);
+        currentB = currentB -> next;
     }
 	return retmat;
 }
@@ -163,9 +181,3 @@ void destroy_tuples(sp_tuples * mat_t){
     free(mat_t);
     return;
 }  
-
-
-
-
-
-
