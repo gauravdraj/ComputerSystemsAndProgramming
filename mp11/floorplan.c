@@ -56,6 +56,7 @@ void floorplan(const char file[]) {
 // Return 1 if the given slicing tree node is a leave node, and 0 otherwise.
 int is_leaf_node(node_t* ptr) {
   // TODO: (remember to modify the return value appropriately)
+  if (ptr -> left == NULL && ptr -> right == NULL) return 1;
   return 0;
 }
 
@@ -63,6 +64,7 @@ int is_leaf_node(node_t* ptr) {
 // Return 1 if the given slicing tree node is an internal node, and 0 otherwise.
 int is_internal_node(node_t* ptr) {
   // TODO: (remember to modify the return value appropriately)
+  if (ptr -> left != NULL || ptr -> right != NULL) return 1;
   return 0;
 }
 
@@ -70,6 +72,9 @@ int is_internal_node(node_t* ptr) {
 // Return 1 if the given subtree rooted at node 'b' resides in the subtree rooted at node 'a'.
 int is_in_subtree(node_t* a, node_t* b) {
   // TODO: (remember to modify the return value appropriately)
+  if (a == NULL) return 0;
+  else if (a == b) return 1;
+  else return (is_in_subtree(a -> left,b) || is_in_subtree(a -> right,b));
   return 0;
 }
 
@@ -77,7 +82,10 @@ int is_in_subtree(node_t* a, node_t* b) {
 // Rotate a module from a given leave node of the slicing tree by 90 degree. That is, the height 
 // and the width of the modules are swapped.
 void rotate(node_t* ptr) {
-  // TODO: 
+  // TODO:
+  int temp = ptr -> module -> h;
+  ptr -> module -> h = ptr -> module -> w;
+  ptr -> module -> w = temp;
 }
 
 // Procedure: recut
@@ -89,6 +97,8 @@ void recut(node_t* ptr) {
   assert(ptr->module == NULL && ptr->cutline != UNDEFINED_CUTLINE);
 
   // TODO:
+  if (ptr -> cutline == H) ptr -> cutline = V;
+    else ptr -> cutline = H;
   return;
 }
 
@@ -100,6 +110,9 @@ void swap_module(node_t* a, node_t* b) {
   assert(b->module != NULL && b->cutline == UNDEFINED_CUTLINE);
 
   // TODO:
+  module_t *temp = a -> module;
+  a -> module = b -> module;
+  b -> module = temp;
 }
 
 // Procedure: swap_topology
@@ -113,6 +126,15 @@ void swap_topology(node_t* a, node_t* b) {
   assert(a->parent != NULL && b->parent != NULL);
  
   // TODO:
+  node_t *temp= a -> parent;    
+  a -> parent = b -> parent;
+  b -> parent = temp;
+
+  if (a -> parent -> left == b) a -> parent -> left = a;
+    else a -> parent -> right = a;
+
+  if (b -> parent -> left == a) b -> parent -> left = b;
+    else b -> parent -> right = b;
 }
 
 // Procedure: get_expression
@@ -148,6 +170,16 @@ void postfix_traversal(node_t* ptr, int* nth, expression_unit_t* expression) {
   if(ptr == NULL) return;
 
   // TODO:
+  postfix_traversal(ptr -> left, nth, expression);
+  postfix_traversal(ptr -> right, nth, expression);
+  if(ptr -> cutline == V || ptr -> cutline == H) {
+    expression[*nth].cutline = ptr -> cutline;
+    expression[*nth].module = NULL;
+  } else {
+    expression[*nth].module = ptr -> module;
+    expression[*nth].cutline = UNDEFINED_CUTLINE;
+  }
+  ++(*nth);
 }
 
 // get_total_resource
@@ -155,8 +187,12 @@ void postfix_traversal(node_t* ptr, int* nth, expression_unit_t* expression) {
 int get_total_resource(node_t* ptr)
 {
   // TODO:
-
-  return 0;
+  int resource = 0;
+  if (ptr == NULL) return resource;
+  if (ptr -> left == NULL && ptr -> right == NULL) resource = resource + ((ptr -> module) -> resource);
+  resource = resource + get_total_resource(ptr -> left);
+  resource = resource + get_total_resource(ptr -> right);
+  return resource;
 }
 
 // Procedure: init_slicing_tree
@@ -191,7 +227,29 @@ node_t* init_slicing_tree(node_t* par, int n) {
   assert(n >= 0 && n < num_modules);
 
   // TODO:
-  return NULL;
+  node_t *ptr = (node_t *)malloc(sizeof(node_t));
+  ptr -> parent = par;
+
+  if (n == num_modules - 1) {
+    ptr -> module = modules + n;
+    ptr -> cutline = UNDEFINED_CUTLINE;
+    ptr -> left = NULL;
+    ptr -> right = NULL;
+    return ptr;
+  }
+
+  ptr -> cutline = V;
+  ptr -> module = NULL;
+
+  ptr -> right = (node_t *)malloc(sizeof(node_t));
+  ptr -> right -> parent = ptr;
+  ptr -> right -> module = modules + n;
+  ptr -> right -> cutline = UNDEFINED_CUTLINE;
+  ptr -> right -> left = NULL;
+  ptr -> right -> right = NULL;
+
+  ptr->left = init_slicing_tree(ptr, n + 1);
+  return ptr;
 }
 
 
@@ -667,8 +725,3 @@ double optimize(node_t *root, int num_nodes) {
 
   return best_area;
 }
-
-
-
-
-
