@@ -1,0 +1,19 @@
+=== test on constructors ===
+CORRECT: Defalt constructor p1 = (0, 0, 0) + 2
+CORRECT: Constructor with args p2 = (1.4, 2.5, -10.3) p3 = (-10.4, 10.1, -3.7) + 2
+CORRECT: Copy constructor p4 = (-10.4, 10.1, -3.7) + 2
+
+=== test on access functions ===
+CORRECT: Access function x +1 
+CORRECT: Access function y +1 
+CORRECT: Access function z +1 
+
+=== test on set functions ===
+CORRECT: Set functions all correct + 3
+
+=== test on operator overloading functions ===
+CORRECT: operator overlaoding +, p1 + p3 = (-7.1, 12.4, -2.4) +2.5
+CORRECT: operator overlaoding -, p1 - p3 = (13.7, -7.8, 5) +2.5
+CORRECT: operator overlaoding ^, p1 ^ p3 = (-21.64, -1.31, 57.25) + 3
+======================
+Total: 20
