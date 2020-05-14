@@ -1,0 +1,13 @@
+******** Testing with 3 nodes ********
+changeDate score: 4/4
+destroyList score: 5/5
+Test 1 score: 9/9
+******** Testing edge cases ********
+Test 2 score: 6/6
+******** Testing with longer list ********
+changeDate score: 5/5
+destroyList score: 5/5
+Test 3 score: 10/10
+*****************************************
+Total: 25
+*****************************************
