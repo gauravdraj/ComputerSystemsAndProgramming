@@ -1,0 +1,24 @@
+Compilation Results:
+********************
+
+Test Case 1 (5 pts)
+
+Test Case 2 (5 pts)
+
+Test Case 3 (5 pts)
+
+Test Case 4 (5 pts)
+
+Pass test 1
+
+Pass test 2
+
+Pass test 3
+
+Pass test 4
+
+
+
+Full functionality score is 20. Caller/callee setup/teardown will be manually graded. Please check gradescope.
+
+Total: 20
