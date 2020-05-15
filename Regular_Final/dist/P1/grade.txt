@@ -1,24 +1,189 @@
 Compilation Results:
 ********************
+STARTING PASS 1
+0 errors found in first pass.
+STARTING PASS 2
+0 errors found in second pass.
 
 Test Case 1 (5 pts)
+STARTING PASS 1
+0 errors found in first pass.
+STARTING PASS 2
+0 errors found in second pass.
+
+Welcome to the LC-3 simulator.
+
+The contents of the LC-3 tools distribution, including sources, management
+tools, and data, are Copyright (c) 2003 Steven S. Lumetta.
+
+The LC-3 tools distribution is free software covered by the GNU General
+Public License, and you are welcome to modify it and/or distribute copies
+of it under certain conditions.  The file COPYING (distributed with the
+tools) specifies those conditions.  There is absolutely no warranty for
+the LC-3 tools distribution, as described in the file NO_WARRANTY (also
+distributed with the tools).
+
+Have fun.
+
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x0000 R6=x0000 R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+Loaded "test1.obj" and set PC to x6000
+Loaded "leafcount.obj" and set PC to x3000
+0
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x6FFC R6=x6FFB R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+
 
 Test Case 2 (5 pts)
+STARTING PASS 1
+0 errors found in first pass.
+STARTING PASS 2
+0 errors found in second pass.
+
+Welcome to the LC-3 simulator.
+
+The contents of the LC-3 tools distribution, including sources, management
+tools, and data, are Copyright (c) 2003 Steven S. Lumetta.
+
+The LC-3 tools distribution is free software covered by the GNU General
+Public License, and you are welcome to modify it and/or distribute copies
+of it under certain conditions.  The file COPYING (distributed with the
+tools) specifies those conditions.  There is absolutely no warranty for
+the LC-3 tools distribution, as described in the file NO_WARRANTY (also
+distributed with the tools).
+
+Have fun.
+
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x0000 R6=x0000 R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+Loaded "test2.obj" and set PC to x6000
+Loaded "leafcount.obj" and set PC to x3000
+0
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x6FFC R6=x6FFB R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+
+Welcome to the LC-3 simulator.
+
+The contents of the LC-3 tools distribution, including sources, management
+tools, and data, are Copyright (c) 2003 Steven S. Lumetta.
+
+The LC-3 tools distribution is free software covered by the GNU General
+Public License, and you are welcome to modify it and/or distribute copies
+of it under certain conditions.  The file COPYING (distributed with the
+tools) specifies those conditions.  There is absolutely no warranty for
+the LC-3 tools distribution, as described in the file NO_WARRANTY (also
+distributed with the tools).
+
+Have fun.
+
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x0000 R6=x0000 R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+Loaded "test2.obj" and set PC to x6000
+Loaded "leafcount.obj" and set PC to x3000
+0
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x6FFC R6=x6FFB R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+
 
 Test Case 3 (5 pts)
+STARTING PASS 1
+0 errors found in first pass.
+STARTING PASS 2
+0 errors found in second pass.
+
+Welcome to the LC-3 simulator.
+
+The contents of the LC-3 tools distribution, including sources, management
+tools, and data, are Copyright (c) 2003 Steven S. Lumetta.
+
+The LC-3 tools distribution is free software covered by the GNU General
+Public License, and you are welcome to modify it and/or distribute copies
+of it under certain conditions.  The file COPYING (distributed with the
+tools) specifies those conditions.  There is absolutely no warranty for
+the LC-3 tools distribution, as described in the file NO_WARRANTY (also
+distributed with the tools).
+
+Have fun.
+
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x0000 R6=x0000 R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+Loaded "test3.obj" and set PC to x6000
+Loaded "leafcount.obj" and set PC to x3000
+0
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x6FFC R6=x6FFB R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+
 
 Test Case 4 (5 pts)
+STARTING PASS 1
+0 errors found in first pass.
+STARTING PASS 2
+0 errors found in second pass.
 
-Pass test 1
+Welcome to the LC-3 simulator.
 
-Pass test 2
+The contents of the LC-3 tools distribution, including sources, management
+tools, and data, are Copyright (c) 2003 Steven S. Lumetta.
 
-Pass test 3
+The LC-3 tools distribution is free software covered by the GNU General
+Public License, and you are welcome to modify it and/or distribute copies
+of it under certain conditions.  The file COPYING (distributed with the
+tools) specifies those conditions.  There is absolutely no warranty for
+the LC-3 tools distribution, as described in the file NO_WARRANTY (also
+distributed with the tools).
 
-Pass test 4
+Have fun.
+
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x0000 R6=x0000 R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
+Loaded "test4.obj" and set PC to x6000
+Loaded "leafcount.obj" and set PC to x3000
+0
+
+--- halting the LC-3 ---
+
+PC=x0494 IR=xB1AE PSR=x0400 (ZERO)
+R0=x0000 R1=x7FFF R2=x0000 R3=x0000 R4=x0000 R5=x6FFC R6=x6FFB R7=x0490 
+                   x0494 x0FF9 BRNZP TRAP_HALT
 
 
 
 Full functionality score is 20. Caller/callee setup/teardown will be manually graded. Please check gradescope.
 
-Total: 20
+Total: 0
